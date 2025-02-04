@@ -2,73 +2,129 @@ class Tasks:
     def __init__(self):
         self.id: int = 0
         self.description: str = ""
-        self.status: str = "to do"
+        self.status: str = "todo"
         self.createdAt: str = ""
         self.updatedAt: str = ""
 
-    def add(self, description):
-        self.mk_file("data")
+    def add(self, description: str) -> None:
+        """Adds a new dict into a list of tasks in "data.json" file.
+
+        Args:
+            description (str): String for a description.
+        """
+        self.mk_file()
         task = {
             "id": 0,
-            "status": "to do",
+            "status": "todo",
             "createdAt": strftime("%Y-%m-%d %H:%M:%S"),
             "updatedAt": None,
             "description": description,
         }
-        data = self.get_data("data")
+        data = self.get_data()
         tasks = self.get_tasks(data)
         if len(tasks) != 0:
             task["id"] = tasks[-1]["id"] + 1
         else:
             task["id"] = 1
-        tasks.append(task)  # добавляет элемент в список
+        tasks.append(task)  # adds new element into a list
         data["count"] = len(tasks)
-        self.set_data("data", data)
-        print(f"Task added successfully (id: {task["id"]})")
+        self.set_data(data)
+        print(f"Task added successfully (ID: {task["id"]})")
 
-    def delete(self, id):
+    def delete(self, id: int):
         data = self.get_data("data")
-        for task in range(data["count"]):
-            if data["tasks"][task]["id"] == int(id):
-                del data["tasks"][task]
-                break
+        
+        # validate id
+        try:
+            id = int(id)
+        except: ValueError("Parameter \"ID\" should contain an integer.")
+        
+        tasks = self.get_tasks(data)
+        
+        for index in range(len(tasks)):
+            if tasks[index]["id"] == id:
+                del tasks[index]; break
+        
         data["count"] = len(data["tasks"])
-        self.set_data("data", data)
+        self.set_data(data)
         print(f"Task deleted successfully (id: {id})")
 
     def update(self, id, description):
-        self.updatedAt = strftime("%Y-%m-%d %H:%M:%S")
-        print(f"Task updated successfully (id: {id}, description: {description}, updated at: {self.updatedAt})")
+        data = self.get_data("data")
+        tasks = data["tasks"]
         
-    def mark(self, id, status):
-        self.updatedAt = strftime("%Y-%m-%d %H:%M:%S")
+        # validate id
+        try:
+            id = int(id)
+        except: ValueError("Parameter \"ID\" should contain an integer.")
+        
+        task = self.get_task(tasks, id)
+            
+        task["description"] = description
+        task["updatedAt"] = strftime("%Y-%m-%d %H:%M:%S")
+        self.set_data(data)
+        print(f"Task updated successfully (ID: {id})")
+        
+    def mark(self, id: int, status: str):
+        # validate status
+        if status not in ("todo", "in progress", "done"):
+            raise ValueError("Parameter \"status\" should contain one of the following potions: \"todo\", \"in progress\", \"done\"")
+        
+        # validate id
+        try:
+            id = int(id)
+        except: ValueError("Parameter \"ID\" should contain an integer.")
+        
+        data = self.get_data("data")
+        tasks = data["tasks"]
+        task = self.get_task(tasks, id)
+            
+        task["status"] = status
+        task["updatedAt"] = strftime("%Y-%m-%d %H:%M:%S")
+        self.set_data(data)
         print(f"Task marked successfully (id: {id}, status: {status})")
         
-    def list(self):
-        ...
+    def list_tasks(self, filter=None):
+        data = self.get_data("data")
+        tasks = data["tasks"]
+        for task in tasks:
+            for key, value in task.items():
+                print(f"{key}: {value}")
     
-    # json setup
-    def set_structure(self, fileName):
-        """Организует структуру внутри файла."""
-        structure = {"count": 0, "tasks": []}
-        with open(file=f"{fileName}.json", mode="w") as file:
-            json.dump(structure, file, indent=2)
-        
-    def mk_file(self, fileName):
-        """Создает файл, если такого не существует, и организует структуру внутри него"""
+    @staticmethod
+    def mk_file(fileName: str = "data") -> None:
         if not f"{fileName}.json" in os.listdir():
-            with open(file=f"{fileName}.json", mode="w"):
-                self.set_structure(fileName)
-                
-    def get_data(self, fileName) -> dict:
-        with open(file=f"{fileName}.json", mode="r", encoding="utf-8") as file: data = json.load(file)
-        return data
+            structure = {"count": 0, "tasks": []}
+            with open(file=f"{fileName}.json", mode="w") as file:
+                json.dump(structure, file, indent=2)
     
-    def get_tasks(self, data) -> list:
+    @staticmethod            
+    def get_data(fileName: str = "data") -> dict:
+        with open(f"{fileName}.json", "r", encoding="utf-8") as file:
+            return json.load(file)
+    
+    @staticmethod
+    def get_tasks(data: dict) -> list:
         return data["tasks"]
 
-    def set_data(self, fileName, data) -> None:
-        with open(file=f"{fileName}.json", mode="w", encoding="utf-8") as file: json.dump(data, file, indent=2)
+    @staticmethod
+    def get_task(tasks: list, id: int) -> dict | None:
+        """Returns dictionary found in list of tasks if it exists.
+
+        Args:
+            tasks (list): List of tasks that contains all the tasks dicts.
+            id (int): ID of each task.
+
+        Returns:
+            dict | None: Dict with all data of a task or None if it doesn't exist.
+        """
+        for task in tasks:
+            return task if task["id"] == id else None
+    
+    @staticmethod
+    def set_data(data: dict, fileName: str = "data") -> None:
+        with open(f"{fileName}.json", "w", encoding="utf-8") as file:
+            json.dump(data, file, indent=2)
 
 
 if __name__ != "__main__":

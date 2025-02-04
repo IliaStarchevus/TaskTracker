@@ -8,8 +8,8 @@ class App:
         self.parse()
 
     def add_arguments(self):
-        self.parser.add_argument("command", choices=["add", "update", "delete", "mark", "list"], metavar="command", help="available: %(choices)s")
-        self.parser.add_argument("parameters", action="extend", nargs="*", metavar="parameters")
+        self.parser.add_argument("command", choices=["add", "update", "delete", "mark", "list"], metavar="command", help="%(choices)s")
+        self.parser.add_argument("parameters", action="extend", nargs="*", metavar="parameters", help="ID, description, status, created time, updated time")
         
     def parse(self):
         self.args = self.parser.parse_args()
@@ -17,7 +17,8 @@ class App:
         command = self.args.command
         parameters = self.args.parameters
         
-        # print(self.args)
+        if not parameters:
+            parameters = [None for n in range(4)]
             
         match command:
             case "add":
@@ -29,7 +30,7 @@ class App:
             case "mark":
                 self.tasks.mark(parameters[0], parameters[1])
             case "list":
-                self.tasks.list(parameters[0])
+                self.tasks.list_tasks(parameters[0])
             
 
 if __name__ != "__main__":
