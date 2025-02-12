@@ -1,11 +1,7 @@
+'''
 class Tasks:
-    def __init__(self):
-        self.id: int = 0
-        self.description: str = ""
-        self.status: str = "todo"
-        self.createdAt: str = ""
-        self.updatedAt: str = ""
-
+    dataDir = "C:/Users/Ilia/Documents/projects/programming_projects/task_tracker/data"
+    
     def add(self, description: str) -> None:
         """Adds a new dict into a list of tasks in "data.json" file.
 
@@ -32,7 +28,7 @@ class Tasks:
         print(f"Task added successfully (ID: {task["id"]})")
 
     def delete(self, id: int):
-        data = self.get_data("data")
+        data = self.get_data()
         
         # validate id
         try:
@@ -50,7 +46,7 @@ class Tasks:
         print(f"Task deleted successfully (id: {id})")
 
     def update(self, id, description):
-        data = self.get_data("data")
+        data = self.get_data()
         tasks = data["tasks"]
         
         # validate id
@@ -75,7 +71,7 @@ class Tasks:
             id = int(id)
         except: ValueError("Parameter \"ID\" should contain an integer.")
         
-        data = self.get_data("data")
+        data = self.get_data()
         tasks = data["tasks"]
         task = self.get_task(tasks, id)
             
@@ -85,21 +81,21 @@ class Tasks:
         print(f"Task marked successfully (id: {id}, status: {status})")
         
     def list_tasks(self, filter=None):
-        data = self.get_data("data")
+        data = self.get_data()
         tasks = data["tasks"]
         for task in tasks:
             for key, value in task.items():
                 print(f"{key}: {value}")
     
     @staticmethod
-    def mk_file(fileName: str = "data") -> None:
+    def mk_file(fileName: str = f"{dataDir}/tasks") -> None:
         if not f"{fileName}.json" in os.listdir():
             structure = {"count": 0, "tasks": []}
             with open(file=f"{fileName}.json", mode="w") as file:
                 json.dump(structure, file, indent=2)
     
     @staticmethod            
-    def get_data(fileName: str = "data") -> dict:
+    def get_data(fileName: str = f"{dataDir}/tasks") -> dict:
         with open(f"{fileName}.json", "r", encoding="utf-8") as file:
             return json.load(file)
     
@@ -122,11 +118,54 @@ class Tasks:
             return task if task["id"] == id else None
     
     @staticmethod
-    def set_data(data: dict, fileName: str = "data") -> None:
+    def set_data(data: dict, fileName: str = f"{dataDir}/tasks") -> None:
         with open(f"{fileName}.json", "w", encoding="utf-8") as file:
             json.dump(data, file, indent=2)
+'''
+
+class Task:
+    dictStruct: dict = {
+        "id": 0,
+        "headline": "",
+        "description": "",
+        "created": "",
+        "updated": "",
+        "status": "",
+        "category": "",
+        "tags": [],
+    }
+    
+    def __init__(
+        self, headline: str, description: str,
+        status: str, category: str, tags: list,
+    ) -> None:
+        self.id: int = 0
+        self.headline: str = headline
+        self.description: str = description
+        self.created: str = strftime("%Y-%m-%d %H:%M:%S")
+        self.updated: str = self.created
+        self.status: str = status
+        self.category: str = category
+        self.tags: list = tags
+        
+    def __str__(self) -> str:
+        return str(self.__dict__)
+        
+    def mk_dict(self) -> dict:
+        task = self.dictStruct
+        task["id"] = self.id
+        task["headline"] = self.headline
+        task["description"] = self.description
+        task["created"] = self.created
+        task["updated"] = self.updated
+        task["status"] = self.status
+        task["category"] = self.category
+        task["tags"] = self.tags
+        return task
+    
+    def set_id(self, value: int) -> None:
+        self.id: int = value
 
 
 if __name__ != "__main__":
     from time import strftime
-    import json, os
