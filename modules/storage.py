@@ -230,6 +230,21 @@ def mark_task(data, id: int, status: str) -> dict:
     print(infoStr)
     data["tasks"][index]["updated"] = strftime("%Y-%m-%d %H:%M:%S")
     return data
+
+
+@process_data
+def list_tasks(data, key: str, reversed: bool) -> dict:
+    tasks = get_sorted_tasks(data["tasks"],
+                             key,
+                             reversed)
+    tasksStr = ""
+    for task in tasks:
+        taskStr =  f"\nID: {task["id"]} | Created: {task["created"]} | Updated: {task["updated"]} |\n"
+        taskStr += f"Status: {task["status"]} | Category: {task["category"]} | Tags: {[tag + "; " for tag in task["tags"]] if task["tags"] != [] else ""} |\n"
+        taskStr += f"   {task["description"]}\n"
+        tasksStr += taskStr
+    print(tasksStr)
+    return data
         
         
 if __name__ != "__main__":
