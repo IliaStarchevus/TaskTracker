@@ -8,7 +8,7 @@ def validate_id(value: int) -> int:
         errStr =f'Value "id" should not be less or equal to zero'
         logger.critical(errStr)
         raise ValueError(errStr)
-    logger.info('Value "id" is valid')
+    logger.debug('Value "id" is valid')
     return value
 
 
@@ -44,17 +44,47 @@ def add(args) -> None:
     storage.add_task(description, status, category, tags)
     
     
-def update(args) -> None:
+# def update(args) -> None:
+#     id = validate_id(args.id)
+#     property = args.property
+#     match property:
+#         case "description":
+#             value = args.description
+#         case "status":
+#             value = args.status
+#         case "tags":
+#             value = args.tags
+#     storage.update_task(id, property, value)
+
+
+def update_description(args) -> None:
     id = validate_id(args.id)
-    key = validate_key(args.key)
-    value = validate_value(args.value)
-    storage.update_task(id, key, value)
+    description = args.description
+    storage.update_task_description(id, description)
+    
+    
+def update_status(args) -> None:
+    id = validate_id(args.id)
+    status = args.status
+    storage.update_task_status(id, status)
+    
+    
+def update_category(args) -> None:
+    id = validate_id(args.id)
+    category = args.category
+    storage.update_task_category(id, category)
+    
+    
+def update_tags(args) -> None:
+    id = validate_id(args.id)
+    tags = args.tags
+    storage.update_task_tags(id, tags)
     
 
-def mark(args):
-    id = validate_id(args.id)
-    status = validate_status(args.status)
-    storage.mark_task(id, status)
+# def mark(args):
+#     id = validate_id(args.id)
+#     status = validate_status(args.status)
+#     storage.mark_task(id, status)
     
 
 def delete(args) -> None:

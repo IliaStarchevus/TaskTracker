@@ -101,7 +101,7 @@ def get_index(id: int, tasks: list) -> int:
     2
     ```
     """
-    validate_id(id)
+    # validate_id(id)
     validate_tasks(tasks)
     lenght = len(tasks)
     low = 0
@@ -122,16 +122,16 @@ def get_index(id: int, tasks: list) -> int:
 
 
 # VALIDATION
-def validate_id(value: int) -> None:
-    if type(value) != int:
-        errStr = f'Type of value "id" should be "int", not "{type(value).__name__}"'
-        logger.critical(errStr)
-        raise TypeError(errStr)
-    if value <= 0:
-        errStr =f'Value "id" should not be less or equal to zero'
-        logger.critical(errStr)
-        raise ValueError(errStr)
-    logger.info('Value "id" is valid')
+# def validate_id(value: int) -> None:
+#     if type(value) != int:
+#         errStr = f'Type of value "id" should be "int", not "{type(value).__name__}"'
+#         logger.critical(errStr)
+#         raise TypeError(errStr)
+#     if value <= 0:
+#         errStr =f'Value "id" should not be less or equal to zero'
+#         logger.critical(errStr)
+#         raise ValueError(errStr)
+#     logger.info('Value "id" is valid')
     
 
 def validate_tasks(value: list) -> None:
@@ -200,36 +200,64 @@ def delete_all_tasks(data, key: str) -> dict:
     
 
 @process_data
-def update_task(data, id: int, key: str, value) -> dict:
-    if key == "id" or key == "updated" or key == "created" or key == "status" or key == "tags":
-        infoStr = f'Can not change value "{key}"'
-        logger.info(infoStr)
-        print(infoStr)
-        return data
+def update_task_description(data, id: int, description: str) -> dict:
     index = get_index(id, data["tasks"])
-    if data["tasks"][index][key] == value:
-        infoStr = f'Task key "{key}" is already have value "{value}"'
-    else:
-        data["tasks"][index][key] = value
-        data["tasks"][index]["updated"] = strftime("%Y-%m-%d %H:%M:%S")
-        infoStr = f"Task is updated successfully (ID: {id})"
-    info(infoStr)
+    data["tasks"][index]["description"] = description
+    infoStr = f'Description updated successfully (ID: {id})'
+    logger.info(infoStr)
     print(infoStr)
+    data["tasks"][index]["updated"] = strftime("%Y-%m-%d %H:%M:%S")
     return data
 
 
 @process_data
-def mark_task(data, id: int, status: str) -> dict:
+def update_task_category(data, id: int, category: str) -> dict:
+    index = get_index(id, data["tasks"])
+    data["tasks"][index]["category"] = category
+    infoStr = f"Category updated successfully (ID: {id})"
+    logger.info(infoStr)
+    print(infoStr)
+    data["tasks"][index]["updated"] = strftime("%Y-%m-%d %H:%M:%S")
+    return data
+
+
+@process_data
+def update_task_tags(data, id: int, tags: list) -> dict:
+    index = get_index(id, data["tasks"])
+    data["tasks"][index]["tags"] = tags
+    infoStr = f"Tags updated successfully (ID: {id})"
+    logger.info(infoStr)
+    print(infoStr)
+    data["tasks"][index]["updated"] = strftime("%Y-%m-%d %H:%M:%S")
+    return data
+
+
+@process_data
+def update_task_status(data, id: int, status: str) -> dict:
     index = get_index(id, data["tasks"])
     if data["tasks"][index]["status"] == status:
-        infoStr = f'Task is already marked as {status}'
+        infoStr = f'Status value is already "{status}"'
     else:
         data["tasks"][index]["status"] = status
-        infoStr = f'Marked task as {status} (ID: {id})'
+        infoStr = f'Status updated successfully (ID: {id})'
     info(infoStr)
     print(infoStr)
     data["tasks"][index]["updated"] = strftime("%Y-%m-%d %H:%M:%S")
     return data
+
+
+# @process_data
+# def mark_task(data, id: int, status: str) -> dict:
+#     index = get_index(id, data["tasks"])
+#     if data["tasks"][index]["status"] == status:
+#         infoStr = f'Task is already marked as {status}'
+#     else:
+#         data["tasks"][index]["status"] = status
+#         infoStr = f'Marked task as {status} (ID: {id})'
+#     info(infoStr)
+#     print(infoStr)
+#     data["tasks"][index]["updated"] = strftime("%Y-%m-%d %H:%M:%S")
+#     return data
         
         
 if __name__ != "__main__":
