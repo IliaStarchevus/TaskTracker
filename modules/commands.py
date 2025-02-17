@@ -8,19 +8,7 @@ def validate_id(value: int) -> int:
         errStr =f'Value "id" should not be less or equal to zero'
         logger.critical(errStr)
         raise ValueError(errStr)
-    logger.debug('Value "id" is valid')
-    return value
-
-
-def validate_description(value) -> str:
-    return value
-
-
-def validate_status(value) -> str:
-    return value
-
-
-def validate_category(value) -> str:
+    logger.info('Value "id" is valid')
     return value
 
 
@@ -28,18 +16,11 @@ def validate_tags(value) -> list:
     return value
 
 
-def validate_key(value) -> None:
-    return value
-
-
-def validate_value(value) -> str:
-    return value
-
 # COMMANDS
 def add(args) -> None:
-    description = validate_description(args.description)
-    status = validate_status(args.status)
-    category = validate_category(args.category)
+    description = args.description
+    status = args.status
+    category = args.category
     tags = validate_tags(args.tags)
     storage.add_task(description, status, category, tags)
     
@@ -93,38 +74,18 @@ def delete(args) -> None:
     
     
 def delete_all(args) -> None:
-    key = validate_key(args.key)
+    key = args.key
     storage.delete_all_tasks(key)
     
 
 def list(args) -> None:
-    
-    # storage.list_tasks(args.key, args.reverse)
-    # return
-
-    data = storage.get_data()
-    tasks = storage.get_sorted_tasks(data["tasks"],
-                                     args.key,
-                                     args.reversed)
-    tasksStr = ""
-    for task in tasks:
-        taskStr = ""
-        taskStr += f"id: {task["id"]}\n"
-        taskStr += f"- description: {task["description"]}\n"
-        taskStr += f"- created: {task["created"]}\n"
-        taskStr += f"- updated: {task["updated"]}\n"
-        taskStr += f"- status: {task["status"]}\n"
-        taskStr += f"- category: {task["category"]}\n"
-        taskStr += f"- tags: {[tag + ", " for tag in task["tags"]] if task["tags"] != [] else ""}\n"
-        tasksStr += taskStr
-    print(tasksStr)
+    storage.list_tasks(args.key, args.reversed)
 
 
 if __name__ != "__main__":
     # IMPORTING
-    from . import storage
-    
     import logging
+    from . import storage
     
     # SETTING LOGGER
     logging.basicConfig(level=logging.DEBUG,
