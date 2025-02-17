@@ -17,11 +17,11 @@ def mk_dir(path: str) -> None:
     ### Arguments
     - `path` `(str)`: leads to a directory.
     """
-    if not os.path.exists(path):
-        os.mkdir(path)
-        debug(f"Created directory: {path=}")
+    if not path.exists(path):
+        mkdir(path)
+        logger.debug(f"Created directory: {path=}")
     else:
-        debug(f"Path already exists: {path=}")
+        logger.debug(f"Path already exists: {path=}")
     
     
 def mk_file(path: str) -> None:
@@ -32,12 +32,12 @@ def mk_file(path: str) -> None:
     ### Arguments
     - `path` `(str)`: leads to a file.
     """
-    if not os.path.exists(path):
+    if not path.exists(path):
         with open(path, "w"):
             mk_json_struct(path)
-        debug(f"Created file: {path=}")
+        logger.debug(f"Created file: {path=}")
     else:
-        debug(f"File already exists: {path=}")
+        logger.debug(f"File already exists: {path=}")
         
         
 def mk_json_struct(path: str) -> None:
@@ -173,7 +173,7 @@ def add_task(data, description: str, status: str, category: str, tags: list) -> 
 def delete_task(data, id: int) -> dict:
     if len(data["tasks"]) == 0:
         infoStr = f"Task list is already empty"
-        info(infoStr)
+        logger.info(infoStr)
         print(infoStr)
         return data
     index = get_index(id, data["tasks"])
@@ -213,7 +213,7 @@ def update_task(data, id: int, key: str, value) -> dict:
         data["tasks"][index][key] = value
         data["tasks"][index]["updated"] = strftime("%Y-%m-%d %H:%M:%S")
         infoStr = f"Task is updated successfully (ID: {id})"
-    info(infoStr)
+    logger.info(infoStr)
     print(infoStr)
     return data
 
@@ -226,7 +226,7 @@ def mark_task(data, id: int, status: str) -> dict:
     else:
         data["tasks"][index]["status"] = status
         infoStr = f'Marked task as {status} (ID: {id})'
-    info(infoStr)
+    logger.info(infoStr)
     print(infoStr)
     data["tasks"][index]["updated"] = strftime("%Y-%m-%d %H:%M:%S")
     return data
@@ -249,15 +249,14 @@ def list_tasks(data, key: str, reversed: bool) -> dict:
         
 if __name__ != "__main__":
     # IMPORTING
-    from logging import basicConfig, getLogger, INFO, DEBUG, WARNING, CRITICAL
-    from logging import info, debug, warning, critical
+    import logging
     from json import load, dump
-    import os
+    from os import mkdir, path
     from time import strftime
     
     # SETTING LOGGER
-    basicConfig(level=DEBUG,
+    logging.basicConfig(level=logging.DEBUG,
                 format="%(name)s %(levelname)s %(asctime)s %(message)s",
                 filename=r"logs\task-tracker.log",
                 filemode="w")
-    logger = getLogger(__name__)
+    logger = logging.getLogger(__name__)

@@ -54,9 +54,8 @@ def list(args) -> None:
 
 if __name__ != "__main__":
     # IMPORTING
-    from . import storage
-    
     import logging
+    from . import storage
     
     # SETTING LOGGER
     logging.basicConfig(level=logging.DEBUG,
