@@ -1,8 +1,8 @@
 # DECORATORS
 def process_data(func):
     def wrapper(*args, **kwargs):
-        mk_dir(r"C:\Users\Ilia\Documents\projects\programming_projects\task_tracker\data")
-        mk_file(r"C:\Users\Ilia\Documents\projects\programming_projects\task_tracker\data\tasks.json")
+        mk_dir(fr"{os.path.expanduser("~")}\Documents\task-tracker-data")
+        mk_file(fr"{os.path.expanduser("~")}\Documents\task-tracker-data\tasks.json")
         data = get_data()
         set_data(func(data, *args, **kwargs))
     return wrapper
@@ -55,14 +55,14 @@ def mk_json_struct(path: str) -> None:
 
 # SETTERS & GETTERS
 def get_data() -> dict:
-    with open("data/tasks.json", "r", encoding="utf-8") as file:
+    with open(f"{os.path.expanduser("~")}/documents/task-tracker-data/tasks.json", "r", encoding="utf-8") as file:
         data = load(file)
         logger.debug(f"Got data: {data}")
         return data
     
     
 def set_data(data) -> None:
-    with open("data/tasks.json", "w", encoding="utf-8") as file:
+    with open(f"{os.path.expanduser("~")}/documents/task-tracker-data/tasks.json", "w", encoding="utf-8") as file:
         dump(data, file, indent=2)
     logger.debug(f"Set data: {data}")
     
