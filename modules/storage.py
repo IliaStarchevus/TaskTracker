@@ -17,8 +17,8 @@ def mk_dir(path: str) -> None:
     ### Arguments
     - `path` `(str)`: leads to a directory.
     """
-    if not path.exists(path):
-        mkdir(path)
+    if not os.path.exists(path):
+        os.mkdir(path)
         logger.debug(f"Created directory: {path=}")
     else:
         logger.debug(f"Path already exists: {path=}")
@@ -32,7 +32,7 @@ def mk_file(path: str) -> None:
     ### Arguments
     - `path` `(str)`: leads to a file.
     """
-    if not path.exists(path):
+    if not os.path.exists(path):
         with open(path, "w"):
             mk_json_struct(path)
         logger.debug(f"Created file: {path=}")
@@ -251,7 +251,7 @@ if __name__ != "__main__":
     # IMPORTING
     import logging
     from json import load, dump
-    from os import mkdir, path
+    import os
     from time import strftime
     
     # SETTING LOGGER
